@@ -116,3 +116,6 @@ api.add_resource(Artist, '/artists/<artist_id>')
 
 #api.add_resource(album.TrackList, '/tracks')
 #api.add_resource(album.Track, '/tracks/<track_id>')
+
+if __name__ == '__main__':
+    app.run(debug=True)
