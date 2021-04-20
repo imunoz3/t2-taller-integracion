@@ -86,25 +86,25 @@ def abort_if_track_doesnt_exist(track_id, method):
             abort(422, message="track doesn't exist")
 
 def validate_artist_args(args):
-    name = args.get("name")
-    age = args.get("age")
-    if (len(args) == 2) and (type(name) == str) and (type(age) == int) and (age >= 0):
+    name = args.get("name", default=None, type=str)
+    age = args.get("age", default=None, type=str)
+    if (name != None) and (age != None): 
         return True
     else:
         return False
 
 def validate_album_args(args):
-    name = args.get("name")
-    genre = args.get("genre")
-    if (len(args) == 2) and (type(name) == str) and (type(genre) == str):
+    name = args.get("name", default=None, type=str)
+    genre = args.get("genre", default=None, type=str)
+    if (name != None) and (genre != None):
         return True
     else:
         return False
 
 def validate_track_args(args):
-    name = args.get("name")
-    genre = args.get("genre")
-    if (len(args) == 2) and (type(name) == str) and (type(duration) in [int, float] and (duration >= 0)):
+    name = args.get("name", default=None, type=str)
+    duration = args.get("duration", default=None, type=float)
+    if (name != None) and (duration != None):
         return True
     else:
         return False
@@ -131,7 +131,7 @@ class ArtistList(Resource):
     def post(self):
         args = request.args
         if validate_artist_args(args):
-            age = args['age']
+            age = int(args['age'])
             name = args['name']
             artist_id = b64encode(name.encode()).decode('utf-8')
             artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
