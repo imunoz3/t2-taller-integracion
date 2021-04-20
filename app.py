@@ -30,7 +30,7 @@ class AlbumModel(db.Model):
     name = db.Column(db.String(80), nullable=False)
     genre = db.Column(db.String(80), nullable=False)
     artist_id = db.Column(db.String(80), db.ForeignKey('artist_model.ID'), nullable=False)
-    songs = db.relationship('TrackModel', backref='album_model', lazy = 'dynamic')
+    tracks = db.relationship('TrackModel', backref='album_model', lazy = 'dynamic')
 
     def serialize(self):
         return {
@@ -64,6 +64,10 @@ class TrackModel(db.Model):
                 }   
 
 # Artist
+artist_parser = reqparse.RequestParser()
+artist_parser.add_argument('name', type=str, help='Letters only')
+artist_parser.add_argument('age', type=int, help='Positive numbers only')
+
 def abort_if_artist_doesnt_exist(artist_id):
     artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
     if artist_id not in artist_id_list:
@@ -80,7 +84,7 @@ class Artist(Resource):
         abort_if_artist_doesnt_exist(artist_id)
         ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
         db.session.commit()
-        return 204
+        return '', 204
 
 # ArtistList
 # shows a list of all artists, and lets you POST to add new artists
@@ -93,17 +97,17 @@ class ArtistList(Resource):
 
     def post(self):
         args = artist_parser.parse_args()
+        age = args['age']
         name = args['name']
         artist_id = b64encode(name.encode()).decode('utf-8')
-        age = args['age']
         artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
         if artist_id not in artist_id_list:
             new_artist = ArtistModel(ID = artist_id, name = name, age = age)
             db.session.add(new_artist)
             db.session.commit()
-            return 201
+            return '', 201
         else:
-            return 409
+            return '', 409
 
 ## setup the Api resource routing here
 ## endpoints
