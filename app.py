@@ -89,24 +89,32 @@ def validate_artist_args(args):
     name = args.get("name", type=str)
     age = args.get("age", type=int)
     if (name != None) and (age != None): 
-        return True
+        if (name != '') and (int(age) > 0):
+            return True
+        else:
+            return False
     else:
         return False
 
 def validate_album_args(args):
-    name = args.get("name", default=None, type=str)
-    genre = args.get("genre", default=None, type=str)
+    name = args.get("name", type=str)
+    genre = args.get("genre", type=str)
     if (name != None) and (genre != None):
-        return True
+        if (name != '') and (genre != ''):
+            return True
+        else:
+            return False
     else:
         return False
 
 def validate_track_args(args):
-    name = args.get("name", default=None, type=str)
-    duration = args.get("duration", default=None, type=float)
+    name = args.get("name", type=str)
+    duration = args.get("duration", type=float)
     if (name != None) and (duration != None):
-        if duration > 0:
+        if (name != '') and (float(duration) > 0):
             return True
+        else:
+            return False
     else:
         return False
 
