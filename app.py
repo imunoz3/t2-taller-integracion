@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import reqparse, abort, Api, Resource
 from base64 import b64encode
@@ -78,6 +78,9 @@ def abort_if_artist_doesnt_exist(artist_id):
     if artist_id not in artist_id_list:
         abort(404, message="Artist {} doesn't exist".format(artist_id))
 
+def validate_artist_data(data):
+    pass
+
 class Artist(Resource):
     def get(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id)
@@ -98,18 +101,22 @@ class ArtistList(Resource):
         return json_list, 200
 
     def post(self):
-        args = artist_parser.parse_args()
-        age = args['age']
-        name = args['name']
-        artist_id = b64encode(name.encode()).decode('utf-8')
-        artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
-        if artist_id not in artist_id_list:
-            new_artist = ArtistModel(ID = artist_id, name = name, age = age)
-            db.session.add(new_artist)
-            db.session.commit()
-            return 'created', 201
+        args = request.data
+        print(args)
+        if len(args) == 2:
+            age = args['age']
+            name = args['name']
+            artist_id = b64encode(name.encode()).decode('utf-8')
+            artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
+            if artist_id not in artist_id_list:
+                new_artist = ArtistModel(ID = artist_id, name = name, age = age)
+                db.session.add(new_artist)
+                db.session.commit()
+                return 'created', 201
+            else:
+                return 'artist already exists', 409
         else:
-            return 'artist already exists', 409
+            return 'invalid input', 400
 
 class ArtistAlbum(Resource):
     def get(self, artist_id):
