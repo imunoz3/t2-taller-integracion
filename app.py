@@ -152,7 +152,7 @@ class ArtistList(Resource):
             else:
                 return 'artist already exists', 409
         else:
-            return 'invalid artist data', 400
+            return 'invalid artist input', 400
 
 class ArtistAlbum(Resource):
     def get(self, artist_id):
@@ -233,7 +233,7 @@ class AlbumTrack(Resource):
             json_list.append(json_track)
         return json_list, 200
 
-    def post(self, album_id):
+    """def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
         args = request.args
         if validate_track_args(args):
@@ -250,7 +250,7 @@ class AlbumTrack(Resource):
             else:
                 return 'album has that track already', 409
         else:
-            'invalid track input', 400
+            'invalid track input', 400"""
 
 class AlbumTrackPlay(Resource):
     def put(self, album_id):
