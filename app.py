@@ -66,7 +66,7 @@ artist_parser.add_argument('age', type=int, help='Positive numbers only')
 
 album_parser = reqparse.RequestParser()
 album_parser.add_argument('name', type=str, help='Letters only')
-album_parser.add_argument('genre', type=str, help='Positive numbers only')
+album_parser.add_argument('genre', type=str, help='Letters only')
 
 track_parser = reqparse.RequestParser()
 track_parser.add_argument('name', type=str, help='Letters only')
