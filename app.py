@@ -233,24 +233,25 @@ class AlbumTrack(Resource):
             json_list.append(json_track)
         return json_list, 200
 
-    """def post(self, album_id):
+    def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
         args = request.args
         if validate_track_args(args):
             name = args['name']
             duration = float(args['duration'])
+            times_played = 0
             string = name+":"+album_id
             track_id = b64encode(string.encode()).decode('utf-8')
             track_id_list = [track.ID for track in TrackModel.query.filter(TrackModel.album_id == album_id)]
             if track_id not in track_id_list:
-                new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = 0, album_id = album_id)
+                new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
                 db.session.add(new_track)
                 db.session.commit()
                 return 'created', 201
             else:
                 return 'album has that track already', 409
         else:
-            'invalid track input', 400"""
+            'invalid track input', 400
 
 class AlbumTrackPlay(Resource):
     def put(self, album_id):
