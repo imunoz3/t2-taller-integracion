@@ -86,8 +86,8 @@ def abort_if_track_doesnt_exist(track_id, method):
             abort(422, message="track doesn't exist")
 
 def validate_artist_args(args):
-    name = args.get("name", type=str)
-    age = args.get("age", type=int)
+    name = args.get("name", type = str)
+    age = args.get("age", type = int)
     if (name != None) and (age != None): 
         if (name != '') and (int(age) > 0):
             return True
@@ -97,8 +97,8 @@ def validate_artist_args(args):
         return False
 
 def validate_album_args(args):
-    name = args.get("name", type=str)
-    genre = args.get("genre", type=str)
+    name = args.get("name", type = str)
+    genre = args.get("genre", type = str)
     if (name != None) and (genre != None):
         if (name != '') and (genre != ''):
             return True
@@ -108,9 +108,13 @@ def validate_album_args(args):
         return False
 
 def validate_track_args(args):
-    name = args.get("name", type=str)
-    duration = args.get("duration", type=float)
+    name = args.get("name")
+    duration = args.get("duration")
     if (name != None) and (duration != None):
+        try: 
+            duration = float(duration)
+        except:
+            return False
         if (name != '') and (float(duration) > 0):
             return True
         else:
@@ -199,7 +203,7 @@ class ArtistTrack(Resource):
 
 class ArtistTrackPlay(Resource):
     def put(self, artist_id):
-        abort_if_artist_doesnt_exist(artist_id)
+        abort_if_artist_doesnt_exist(artist_id, 'put')
         for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id):
             album_id = album.ID
             for track in TrackModel.query.filter(TrackModel.album_id == album_id):
@@ -240,7 +244,6 @@ class AlbumTrack(Resource):
     def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
         args = request.args
-        print(args)
         if validate_track_args(args):
             name = args['name']
             duration = float(args['duration'])
