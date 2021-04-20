@@ -240,6 +240,7 @@ class AlbumTrack(Resource):
     def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
         args = request.args
+        print(args)
         if validate_track_args(args):
             name = args['name']
             duration = float(args['duration'])
