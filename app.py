@@ -108,13 +108,9 @@ def validate_album_args(args):
         return False
 
 def validate_track_args(args):
-    name = args.get("name")
-    duration = args.get("duration")
+    name = args.get("name", type=str)
+    duration = args.get("duration", type=float)
     if (name != None) and (duration != None):
-        try: 
-            duration = float(duration)
-        except:
-            return False
         if (name != '') and (float(duration) > 0):
             return True
         else:
@@ -261,7 +257,7 @@ class AlbumTrack(Resource):
             else:
                 return 'album has that track already', 409
         else:
-            'invalid track input', 400
+            return 'invalid track input', 400
 
 class AlbumTrackPlay(Resource):
     def put(self, album_id):
