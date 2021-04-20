@@ -130,7 +130,7 @@ class ArtistList(Resource):
 
     def post(self):
         args = request.args
-        if validate_artist_data(args):
+        if validate_artist_args(args):
             age = args['age']
             name = args['name']
             artist_id = b64encode(name.encode()).decode('utf-8')
