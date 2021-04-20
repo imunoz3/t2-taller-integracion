@@ -143,6 +143,8 @@ class ArtistList(Resource):
             age = int(args['age'])
             name = args['name']
             artist_id = b64encode(name.encode()).decode('utf-8')
+            if len(artist_id) > 22:
+                artist_id = artist_id[:22]
             artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
             if artist_id not in artist_id_list:
                 new_artist = ArtistModel(ID = artist_id, name = name, age = age)
@@ -170,6 +172,8 @@ class ArtistAlbum(Resource):
             genre = args['genre']
             string = name+":"+artist_id
             album_id = b64encode(string.encode()).decode('utf-8')
+            if len(album_id) > 22:
+                album_id = album_id[:22]
             album_id_list = [album.ID for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id)]
             if album_id not in album_id_list:
                 new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
@@ -242,6 +246,8 @@ class AlbumTrack(Resource):
             times_played = 0
             string = name+":"+album_id
             track_id = b64encode(string.encode()).decode('utf-8')
+            if len(track_id) > 22:
+                track_id = track_id[:22]
             track_id_list = [track.ID for track in TrackModel.query.filter(TrackModel.album_id == album_id)]
             if track_id not in track_id_list:
                 new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
