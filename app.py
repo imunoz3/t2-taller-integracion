@@ -91,10 +91,7 @@ def validate_artist_args(args):
     if (name != None) and (age != None): 
         if (name != '') and (int(age) > 0):
             return True
-        else:
-            return False
-    else:
-        return False
+    return False
 
 def validate_album_args(args):
     name = args.get("name", type = str)
@@ -102,10 +99,7 @@ def validate_album_args(args):
     if (name != None) and (genre != None):
         if (name != '') and (genre != ''):
             return True
-        else:
-            return False
-    else:
-        return False
+    return False
 
 def validate_track_args(args):
     name = args.get("name", type=str)
@@ -113,10 +107,7 @@ def validate_track_args(args):
     if (name != None) and (duration != None):
         if (name != '') and (float(duration) > 0):
             return True
-        else:
-            return False
-    else:
-        return False
+    return False
 
 class Artist(Resource):
     def get(self, artist_id):
@@ -150,11 +141,12 @@ class ArtistList(Resource):
                 new_artist = ArtistModel(ID = artist_id, name = name, age = age)
                 db.session.add(new_artist)
                 db.session.commit()
-                return 'artist created', 201
+                return new_artist.serialize(), 201
             else:
-                return 'artist already exists', 409
+                artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
+                return artist.serialize(), 409
         else:
-            return 'invalid artist input', 400
+            return None, 400
 
 class ArtistAlbum(Resource):
     def get(self, artist_id):
@@ -179,11 +171,12 @@ class ArtistAlbum(Resource):
                 new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
                 db.session.add(new_album)
                 db.session.commit()
-                return 'created', 201
+                return '', 201
             else:
-                return 'artist has that album already', 409
+                album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
+                return album.serialize(), 409
         else:
-            return 'invalid album input', 400
+            return '', 400
 
 class ArtistTrack(Resource):
     def get(self, artist_id):
@@ -205,7 +198,7 @@ class ArtistTrackPlay(Resource):
             for track in TrackModel.query.filter(TrackModel.album_id == album_id):
                 track.times_played += 1
                 db.session.commit()
-        return "all songs from artist where played", 200
+        return '', 200
 #Album
 class Album(Resource):
     def get(self, album_id):
@@ -217,7 +210,7 @@ class Album(Resource):
         abort_if_album_doesnt_exist(album_id, 'delete')
         AlbumModel.query.filter(AlbumModel.ID == album_id).delete()
         db.session.commit()
-        return 'album deleted', 204
+        return '', 204
 
 class AlbumList(Resource):
     def get(self):
@@ -253,11 +246,15 @@ class AlbumTrack(Resource):
                 new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
                 db.session.add(new_track)
                 db.session.commit()
-                return 'created', 201
+                return '', 201
             else:
-                return 'album has that track already', 409
+                artist_id = artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
+                track = TrackModel.query.filter(TrackModel.ID == track_id).first()
+                json_track = track.serialize()
+                json_track["artist"] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
+                return json_track, 409
         else:
-            return 'invalid track input', 400
+            return '', 400
 
 class AlbumTrackPlay(Resource):
     def put(self, album_id):
@@ -265,7 +262,7 @@ class AlbumTrackPlay(Resource):
         for track in TrackModel.query.filter(TrackModel.album_id == album_id):
             track.times_played += 1
             db.session.commit()
-        return "all songs from album where played", 200
+        return '', 200
             
 #Track
 class Track(Resource):
@@ -282,7 +279,7 @@ class Track(Resource):
         abort_if_track_doesnt_exist(track_id, 'delete')
         TrackModel.query.filter(TrackModel.ID == track_id).delete()
         db.session.commit()
-        return 'track deleted', 204
+        return '', 204
 
 class TrackList(Resource):
     def get(self):
@@ -301,7 +298,7 @@ class TrackPlay(Resource):
         track = TrackModel.query.filter(TrackModel.ID == track_id).first()
         track.times_played += 1
         db.session.commit()
-        return "track was played", 200
+        return '', 200
 
 ## setup the Api resource routing here
 ## endpoints
