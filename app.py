@@ -87,9 +87,10 @@ def abort_if_track_doesnt_exist(track_id, method):
 
 def validate_artist_args(args):
     name = args.get("name", default=None, type=str)
-    age = args.get("age", default=None, type=str)
+    age = args.get("age", default=None, type=int)
     if (name != None) and (age != None): 
-        return True
+        if age > 0:
+            return True
     else:
         return False
 
@@ -105,7 +106,8 @@ def validate_track_args(args):
     name = args.get("name", default=None, type=str)
     duration = args.get("duration", default=None, type=float)
     if (name != None) and (duration != None):
-        return True
+        if duration > 0:
+            return True
     else:
         return False
 
