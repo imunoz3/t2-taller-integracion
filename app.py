@@ -70,7 +70,7 @@ album_parser.add_argument('genre', type=str, help='Positive numbers only')
 
 track_parser = reqparse.RequestParser()
 track_parser.add_argument('name', type=str, help='Letters only')
-track_parser.add_argument('duration', type=float, help='Numbers only')
+track_parser.add_argument('duration', type=float, help='Integers/floats only')
 
 # Artist
 def abort_if_artist_doesnt_exist(artist_id):
@@ -111,7 +111,7 @@ class ArtistList(Resource):
         else:
             return 'artist already exists', 409
 
-class AlbumArtist(Resource):
+class ArtistAlbum(Resource):
     def get(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id)
         json_list = []
@@ -135,16 +135,7 @@ class AlbumArtist(Resource):
         else:
             return 'artist has that album already', 409
 
-    def put(self, artist_id):
-        abort_if_artist_doesnt_exist(artist_id)
-        for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id):
-            album_id = album.ID
-            for track in TrackModel.query.filter(TrackModel.album_id == album_id):
-                track.times_played += 1
-                db.session.commit()
-        return "all songs from artist where played", 200
-
-class TrackArtist(Resource):
+class ArtistTrack(Resource):
     def get(self, artist_id):
         json_list = []
         for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id):
@@ -154,6 +145,16 @@ class TrackArtist(Resource):
                 json_track['artist'] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
                 json_list.append(json_track)
         return json_list, 200
+
+class ArtistTrackPlay(Resource):
+    def put(self, artist_id):
+        abort_if_artist_doesnt_exist(artist_id)
+        for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id):
+            album_id = album.ID
+            for track in TrackModel.query.filter(TrackModel.album_id == album_id):
+                track.times_played += 1
+                db.session.commit()
+        return "all songs from artist where played", 200
 #Album
 def abort_if_album_doesnt_exist(album_id):
     album_id_list = [album.ID for album in AlbumModel.query.all()]
@@ -179,7 +180,7 @@ class AlbumList(Resource):
             json_list.append(album.serialize())
         return json_list, 200
 
-class TrackAlbum(Resource):
+class AlbumTrack(Resource):
     def get(self, album_id):
         abort_if_album_doesnt_exist(album_id)
         json_list = []
@@ -206,6 +207,7 @@ class TrackAlbum(Resource):
         else:
             return 'album has that track already', 409
 
+class AlbumTrackPlay(Resource):
     def put(self, album_id):
         abort_if_album_doesnt_exist(album_id)
         for track in TrackModel.query.filter(TrackModel.album_id == album_id):
@@ -235,14 +237,6 @@ class Track(Resource):
         db.session.commit()
         return 'deleted', 204
 
-    def put(self, track_id):
-        abort_if_track_doesnt_exist(track_id)
-        track = TrackModel.query.filter(TrackModel.ID == track_id).first()
-        track.times_played += 1
-        db.session.commit()
-        return "track was played", 200
-
-
 class TrackList(Resource):
     def get(self):
         json_list = []
@@ -254,23 +248,33 @@ class TrackList(Resource):
             json_list.append(json_track)
         return json_list, 200
 
+class TrackPlay(Resource):
+    def put(self, track_id):
+        abort_if_track_doesnt_exist(track_id)
+        track = TrackModel.query.filter(TrackModel.ID == track_id).first()
+        track.times_played += 1
+        db.session.commit()
+        return "track was played", 200
+
+
 ## setup the Api resource routing here
 ## endpoints
 api = Api(app)
+
 api.add_resource(ArtistList, '/artists')
 api.add_resource(Artist, '/artists/<artist_id>')
-api.add_resource(AlbumArtist, '/artists/<artist_id>/albums')
-api.add_resource(AlbumArtist, '/artists/<artist_id>/albums/play')
-api.add_resource(TrackArtist, '/artists/<artist_id>/tracks')
+api.add_resource(ArtistAlbum, '/artists/<artist_id>/albums')
+api.add_resource(ArtistTrack, '/artists/<artist_id>/tracks')
+api.add_resource(ArtistTrackPlay, '/artists/<artist_id>/albums/play')
 
 api.add_resource(AlbumList, '/albums')
 api.add_resource(Album, '/albums/<album_id>')
-api.add_resource(TrackAlbum, '/albums/<album_id>/tracks')
-api.add_resource(TrackAlbum, '/albums/<album_id>/tracks/play')
+api.add_resource(AlbumTrack, '/albums/<album_id>/tracks')
+api.add_resource(AlbumTrackPlay, '/albums/<album_id>/tracks/play')
 
 api.add_resource(TrackList, '/tracks')
 api.add_resource(Track, '/tracks/<track_id>')
-api.add_resource(Track, '/tracks/<track_id>/play')
+api.add_resource(TrackPlay, '/tracks/<track_id>/play')
 
 if __name__ == '__main__':
     app.run(debug=True)
