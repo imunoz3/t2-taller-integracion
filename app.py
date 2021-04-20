@@ -101,7 +101,7 @@ class ArtistList(Resource):
         return json_list, 200
 
     def post(self):
-        args = request.data
+        args = request.args
         print(args)
         if len(args) == 2:
             age = args['age']
