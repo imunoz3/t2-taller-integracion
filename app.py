@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 
 class ArtistModel(db.Model):
     ID = db.Column(db.String(80), primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String(80), nullable=False)
     age = db.Column(db.Integer, nullable=False)
     albums = db.relationship('AlbumModel', backref='artist_model', lazy = 'dynamic')
 
@@ -86,11 +86,10 @@ def abort_if_track_doesnt_exist(track_id, method):
             abort(422, message="track doesn't exist")
 
 def validate_artist_args(args):
-    name = args.get("name", default=None, type=str)
-    age = args.get("age", default=None, type=int)
+    name = args.get("name", type=str)
+    age = args.get("age", type=int)
     if (name != None) and (age != None): 
-        if age > 0:
-            return True
+        return True
     else:
         return False
 
