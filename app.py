@@ -129,7 +129,7 @@ class ArtistList(Resource):
         return json_list, 200
 
     def post(self):
-        args = request.args
+        args = request.values
         if validate_artist_args(args):
             age = int(args['age'])
             name = args['name']
@@ -158,7 +158,7 @@ class ArtistAlbum(Resource):
 
     def post(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id, 'post')
-        args = request.args
+        args = request.values
         if validate_album_args(args):
             name = args['name']
             genre = args['genre']
@@ -232,7 +232,7 @@ class AlbumTrack(Resource):
 
     def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
-        args = request.args
+        args = request.values
         if validate_track_args(args):
             name = args['name']
             duration = float(args['duration'])
