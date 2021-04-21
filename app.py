@@ -146,7 +146,7 @@ class Artist(Resource):
     def delete(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id, 'delete')
         ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
-        db.session.commit()
+        db.commit()
         return "artist deleted", 204
 
 class ArtistList(Resource):
@@ -167,8 +167,8 @@ class ArtistList(Resource):
         artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
         if artist_id not in artist_id_list:
             new_artist = ArtistModel(ID = artist_id, name = name, age = age)
-            db.session.add(new_artist)
-            db.session.commit()
+            db.add(new_artist)
+            db.commit()
             return new_artist.serialize(), 201
         else:
             artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
@@ -195,8 +195,8 @@ class ArtistAlbum(Resource):
         album_id_list = [album.ID for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id)]
         if album_id not in album_id_list:
             new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
-            db.session.add(new_album)
-            db.session.commit()
+            db.add(new_album)
+            db.commit()
             return new_album.serialize(), 201
         else:
             album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
@@ -221,7 +221,7 @@ class ArtistTrackPlay(Resource):
             album_id = album.ID
             for track in TrackModel.query.filter(TrackModel.album_id == album_id):
                 track.times_played += 1
-                db.session.commit()
+                db.commit()
         return "all tracks of artist where played", 200
 #Album
 class Album(Resource):
@@ -233,7 +233,7 @@ class Album(Resource):
     def delete(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'delete')
         AlbumModel.query.filter(AlbumModel.ID == album_id).delete()
-        db.session.commit()
+        db.commit()
         return "album deleted", 204
 
 class AlbumList(Resource):
@@ -268,8 +268,8 @@ class AlbumTrack(Resource):
         track_id_list = [track.ID for track in TrackModel.query.filter(TrackModel.album_id == album_id)]
         if track_id not in track_id_list:
             new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
-            db.session.add(new_track)
-            db.session.commit()
+            db.add(new_track)
+            db.commit()
             artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
             json_new_track = new_track.serialize()
             json_new_track["artist"] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
@@ -286,7 +286,7 @@ class AlbumTrackPlay(Resource):
         abort_if_album_doesnt_exist(album_id, 'put')
         for track in TrackModel.query.filter(TrackModel.album_id == album_id):
             track.times_played += 1
-            db.session.commit()
+            db.commit()
         return "all tracks of album where played", 200
             
 #Track
@@ -303,7 +303,7 @@ class Track(Resource):
     def delete(self, track_id):
         abort_if_track_doesnt_exist(track_id, 'delete')
         TrackModel.query.filter(TrackModel.ID == track_id).delete()
-        db.session.commit()
+        db.commit()
         return "track deleted", 204
 
 class TrackList(Resource):
@@ -322,7 +322,7 @@ class TrackPlay(Resource):
         abort_if_track_doesnt_exist(track_id, 'put')
         track = TrackModel.query.filter(TrackModel.ID == track_id).first()
         track.times_played += 1
-        db.session.commit()
+        db.commit()
         return "track was played", 200
 
 ## setup the Api resource routing here
