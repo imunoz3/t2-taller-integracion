@@ -4,9 +4,9 @@ from flask_restful import reqparse, abort, Api, Resource
 from base64 import b64encode
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+db = SQLAlchemy(app)
 
 class ArtistModel(db.Model):
     ID = db.Column(db.String(80), primary_key=True)
