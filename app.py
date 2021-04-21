@@ -311,7 +311,8 @@ class TrackList(Resource):
         json_list = []
         for track in TrackModel.query.all():
             album_id = track.album_id
-            artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
+            album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
+            artist_id = album.artist_id
             json_track = track.serialize()
             json_track['artist'] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
             json_list.append(json_track)
