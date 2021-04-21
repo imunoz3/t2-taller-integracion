@@ -179,7 +179,7 @@ class ArtistAlbum(Resource):
             new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
             db.session.add(new_album)
             db.session.commit()
-            return '', 201
+            return new_album.serialize(), 201
         else:
             album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
             return album.serialize(), 409
@@ -252,7 +252,10 @@ class AlbumTrack(Resource):
             new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
             db.session.add(new_track)
             db.session.commit()
-            return '', 201
+            artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
+            json_new_track = new_track.serialize()
+            json_new_track["artist"] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
+            return json_new_track, 201
         else:
             artist_id = artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
             track = TrackModel.query.filter(TrackModel.ID == track_id).first()
