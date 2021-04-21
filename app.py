@@ -91,7 +91,7 @@ def validate_artist_args(args):
     try:
         if (type(age) == str) or ((type(age) == int) and age <= 0):
             abort(400, message="incorrect artist imput")
-        else if (type(name) != str) or ((type(name) == str) and name == ""):
+        elif (type(name) != str) or ((type(name) == str) and name == ""):
             abort(400, message="incorrect aritst imput")
     except:
         abort(400, message="incorrect aritst imput")
@@ -102,7 +102,7 @@ def validate_album_args(args):
     try:
         if (type(name) != str) or (type(genre) != str):
             abort(400, message="incorrect album imput")
-        else if (type(name) == str) and (type(genre) == str):
+        elif (type(name) == str) and (type(genre) == str):
             if (name == "") or (genre == ""):
                 abort(400, message="incorrect album imput")
     except:
@@ -114,7 +114,7 @@ def validate_track_args(args):
     try:
         if (type(duration) == str) or (duration <= 0):
             abort(400, message="incorrect track imput")
-        else if (type(name) != str) or ((type(name) == str) and name == ""):
+        elif (type(name) != str) or ((type(name) == str) and name == ""):
             abort(400, message="incorrect track imput")
     except:
         abort(400, message="incorrect aritst imput")
