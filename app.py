@@ -86,26 +86,34 @@ def abort_if_track_doesnt_exist(track_id, method):
             abort(422, message="track doesn't exist")
 
 def validate_artist_args(args):
-    name = args.get("name", type = str)
-    age = args.get("age", type = int)
+    name = args.get("name")
+    age = args.get("age")
     if (name != None) and (age != None): 
-        if (name != '') and (int(age) > 0):
+        try:
+            age = int(age)
+        except:
+            return False
+        if (name != '') and (age > 0):
             return True
     return False
 
 def validate_album_args(args):
-    name = args.get("name", type = str)
-    genre = args.get("genre", type = str)
+    name = args.get("name")
+    genre = args.get("genre")
     if (name != None) and (genre != None):
         if (name != '') and (genre != ''):
             return True
     return False
 
 def validate_track_args(args):
-    name = args.get("name", type=str)
-    duration = args.get("duration", type=float)
+    name = args.get("name")
+    duration = args.get("duration")
     if (name != None) and (duration != None):
-        if (name != '') and (float(duration) > 0):
+        try:
+            duration = float(duration)
+        except:
+            return False
+        if (name != '') and (duration > 0):
             return True
     return False
 
