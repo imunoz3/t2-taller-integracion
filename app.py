@@ -147,7 +147,7 @@ class Artist(Resource):
         abort_if_artist_doesnt_exist(artist_id, 'delete')
         ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
         db.session.commit()
-        abort(204, message="artist deleted")
+        return "artist deleted", 204
 
 class ArtistList(Resource):
     def get(self):
@@ -222,7 +222,7 @@ class ArtistTrackPlay(Resource):
             for track in TrackModel.query.filter(TrackModel.album_id == album_id):
                 track.times_played += 1
                 db.session.commit()
-        abort(200, message="all tracks of artist where played")
+        return "all tracks of artist where played", 200
 #Album
 class Album(Resource):
     def get(self, album_id):
@@ -234,7 +234,7 @@ class Album(Resource):
         abort_if_album_doesnt_exist(album_id, 'delete')
         AlbumModel.query.filter(AlbumModel.ID == album_id).delete()
         db.session.commit()
-        abort(204, message="album deleted")
+        return "album deleted", 204
 
 class AlbumList(Resource):
     def get(self):
@@ -287,7 +287,7 @@ class AlbumTrackPlay(Resource):
         for track in TrackModel.query.filter(TrackModel.album_id == album_id):
             track.times_played += 1
             db.session.commit()
-        abort(200, message="all tracks of album where played")
+        return "all tracks of album where played", 200
             
 #Track
 class Track(Resource):
@@ -304,7 +304,7 @@ class Track(Resource):
         abort_if_track_doesnt_exist(track_id, 'delete')
         TrackModel.query.filter(TrackModel.ID == track_id).delete()
         db.session.commit()
-        abort(204, message="track deleted")
+        return "track deleted", 204
 
 class TrackList(Resource):
     def get(self):
@@ -323,7 +323,7 @@ class TrackPlay(Resource):
         track = TrackModel.query.filter(TrackModel.ID == track_id).first()
         track.times_played += 1
         db.session.commit()
-        abort(200, message="track was played")
+        return "track was played", 200
 
 ## setup the Api resource routing here
 ## endpoints
