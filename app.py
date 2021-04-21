@@ -146,7 +146,7 @@ class ArtistList(Resource):
                 artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
                 return artist.serialize(), 409
         else:
-            return None, 400
+            return '', 400
 
 class ArtistAlbum(Resource):
     def get(self, artist_id):
