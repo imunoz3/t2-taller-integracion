@@ -145,7 +145,7 @@ class Artist(Resource):
 
     def delete(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id, 'delete')
-        ArtistModel.query.filter(ArtistModel.ID == artist_id).first().delete()
+        ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
         db.session.commit()
         return "artist deleted", 204
 
@@ -232,7 +232,7 @@ class Album(Resource):
 
     def delete(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'delete')
-        AlbumModel.query.filter(AlbumModel.ID == album_id).first().delete()
+        AlbumModel.query.filter(AlbumModel.ID == album_id).delete()
         db.session.commit()
         return "album deleted", 204
 
@@ -302,7 +302,7 @@ class Track(Resource):
 
     def delete(self, track_id):
         abort_if_track_doesnt_exist(track_id, 'delete')
-        TrackModel.query.filter(TrackModel.ID == track_id).first().delete()
+        TrackModel.query.filter(TrackModel.ID == track_id).delete()
         db.session.commit()
         return "track deleted", 204
 
