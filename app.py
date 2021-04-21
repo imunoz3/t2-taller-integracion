@@ -89,10 +89,10 @@ def validate_artist_args(args):
     name = args.get("name")
     age = args.get("age")
     try:
-        age = int(age)
-        name = str(name)
-        if age <= 0:
+        if (type(age) == str) or ((type(age) == int) and age <= 0):
             abort(400, message="incorrect artist imput")
+        else if (type(name) != str) or ((type(name) == str) and name == ""):
+            abort(400, message="incorrect aritst imput")
     except:
         abort(400, message="incorrect aritst imput")
 
@@ -100,10 +100,11 @@ def validate_album_args(args):
     name = args.get("name")
     genre = args.get("genre")
     try:
-        name = str(name)
-        genre = str(genre)
-        if (name == "") or (genre== ""):
+        if (type(name) != str) or (type(genre) != str):
             abort(400, message="incorrect album imput")
+        else if (type(name) == str) and (type(genre) == str):
+            if (name == "") or (genre == ""):
+                abort(400, message="incorrect album imput")
     except:
         abort(400, message="incorrect album imput")
 
@@ -111,12 +112,12 @@ def validate_track_args(args):
     name = args.get("name")
     duration = args.get("duration")
     try:
-        name = str(name)
-        duration = float(duration)
-        if duration <= 0:
+        if (type(duration) == str) or (duration <= 0):
+            abort(400, message="incorrect track imput")
+        else if (type(name) != str) or ((type(name) == str) and name == ""):
             abort(400, message="incorrect track imput")
     except:
-        abort(400, message="incorrect track imput")
+        abort(400, message="incorrect aritst imput")
 
 class Artist(Resource):
     def get(self, artist_id):
