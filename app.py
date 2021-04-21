@@ -88,34 +88,35 @@ def abort_if_track_doesnt_exist(track_id, method):
 def validate_artist_args(args):
     name = args.get("name")
     age = args.get("age")
-    if (name != None) and (age != None): 
-        try:
-            age = int(age)
-        except:
-            return False
-        if (name != '') and (age > 0):
-            return True
-    return False
+    try:
+        age = int(age)
+        name = str(name)
+        if age <= 0:
+            abort(400, message="incorrect artist imput")
+    except:
+        abort(400, message="incorrect aritst imput")
 
 def validate_album_args(args):
     name = args.get("name")
     genre = args.get("genre")
-    if (name != None) and (genre != None):
-        if (name != '') and (genre != ''):
-            return True
-    return False
+    try:
+        name = str(name)
+        genre = str(genre)
+        if (name == "") or (genre== ""):
+            abort(400, message="incorrect album imput")
+    except:
+        abort(400, message="incorrect album imput")
 
 def validate_track_args(args):
     name = args.get("name")
     duration = args.get("duration")
-    if (name != None) and (duration != None):
-        try:
-            duration = float(duration)
-        except:
-            return False
-        if (name != '') and (duration > 0):
-            return True
-    return False
+    try:
+        name = str(name)
+        duration = float(duration)
+        if duration <= 0:
+            abort(400, message="incorrect track imput")
+    except:
+        abort(400, message="incorrect track imput")
 
 class Artist(Resource):
     def get(self, artist_id):
@@ -138,23 +139,21 @@ class ArtistList(Resource):
 
     def post(self):
         args = request.json
-        if validate_artist_args(args):
-            age = int(args['age'])
-            name = args['name']
-            artist_id = b64encode(name.encode()).decode('utf-8')
-            if len(artist_id) > 22:
-                artist_id = artist_id[:22]
-            artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
-            if artist_id not in artist_id_list:
-                new_artist = ArtistModel(ID = artist_id, name = name, age = age)
-                db.session.add(new_artist)
-                db.session.commit()
-                return new_artist.serialize(), 201
-            else:
-                artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
-                return artist.serialize(), 409
+        validate_artist_args(args)
+        age = int(args['age'])
+        name = args['name']
+        artist_id = b64encode(name.encode()).decode('utf-8')
+        if len(artist_id) > 22:
+            artist_id = artist_id[:22]
+        artist_id_list = [artist.ID for artist in ArtistModel.query.all()]
+        if artist_id not in artist_id_list:
+            new_artist = ArtistModel(ID = artist_id, name = name, age = age)
+            db.session.add(new_artist)
+            db.session.commit()
+            return new_artist.serialize(), 201
         else:
-            return '', 400
+            artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
+            return artist.serialize(), 409
 
 class ArtistAlbum(Resource):
     def get(self, artist_id):
@@ -167,24 +166,22 @@ class ArtistAlbum(Resource):
     def post(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id, 'post')
         args = request.json
-        if validate_album_args(args):
-            name = args['name']
-            genre = args['genre']
-            string = name+":"+artist_id
-            album_id = b64encode(string.encode()).decode('utf-8')
-            if len(album_id) > 22:
-                album_id = album_id[:22]
-            album_id_list = [album.ID for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id)]
-            if album_id not in album_id_list:
-                new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
-                db.session.add(new_album)
-                db.session.commit()
-                return '', 201
-            else:
-                album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
-                return album.serialize(), 409
+        validate_album_args(args)
+        name = args['name']
+        genre = args['genre']
+        string = name+":"+artist_id
+        album_id = b64encode(string.encode()).decode('utf-8')
+        if len(album_id) > 22:
+            album_id = album_id[:22]
+        album_id_list = [album.ID for album in AlbumModel.query.filter(AlbumModel.artist_id == artist_id)]
+        if album_id not in album_id_list:
+            new_album = AlbumModel(ID = album_id, name = name, genre = genre, artist_id = artist_id)
+            db.session.add(new_album)
+            db.session.commit()
+            return '', 201
         else:
-            return '', 400
+            album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
+            return album.serialize(), 409
 
 class ArtistTrack(Resource):
     def get(self, artist_id):
@@ -241,28 +238,26 @@ class AlbumTrack(Resource):
     def post(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'post')
         args = request.json
-        if validate_track_args(args):
-            name = args['name']
-            duration = float(args['duration'])
-            times_played = 0
-            string = name+":"+album_id
-            track_id = b64encode(string.encode()).decode('utf-8')
-            if len(track_id) > 22:
-                track_id = track_id[:22]
-            track_id_list = [track.ID for track in TrackModel.query.filter(TrackModel.album_id == album_id)]
-            if track_id not in track_id_list:
-                new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
-                db.session.add(new_track)
-                db.session.commit()
-                return '', 201
-            else:
-                artist_id = artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
-                track = TrackModel.query.filter(TrackModel.ID == track_id).first()
-                json_track = track.serialize()
-                json_track["artist"] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
-                return json_track, 409
+        validate_track_args(args)
+        name = args['name']
+        duration = float(args['duration'])
+        times_played = 0
+        string = name+":"+album_id
+        track_id = b64encode(string.encode()).decode('utf-8')
+        if len(track_id) > 22:
+            track_id = track_id[:22]
+        track_id_list = [track.ID for track in TrackModel.query.filter(TrackModel.album_id == album_id)]
+        if track_id not in track_id_list:
+            new_track = TrackModel(ID = track_id, name = name, duration = duration, times_played = times_played, album_id = album_id)
+            db.session.add(new_track)
+            db.session.commit()
+            return '', 201
         else:
-            return '', 400
+            artist_id = artist_id = AlbumModel.query.filter(AlbumModel.ID == album_id).first().artist_id
+            track = TrackModel.query.filter(TrackModel.ID == track_id).first()
+            json_track = track.serialize()
+            json_track["artist"] = f"https://app-musica-t2.herokuapp.com/artists/{artist_id}"
+            return json_track, 409
 
 class AlbumTrackPlay(Resource):
     def put(self, album_id):
