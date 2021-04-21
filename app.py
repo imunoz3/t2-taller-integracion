@@ -86,44 +86,53 @@ def abort_if_track_doesnt_exist(track_id, method):
             abort(422, message="track doesn't exist")
 
 def validate_artist_args(args):
-    name = args.get("name")
-    age = args.get("age")
-    if (age != None) and (name != None):
-        try:
-            if (type(age) == str) or ((type(age) == int) and age <= 0):
-                abort(400, message="incorrect artist imput")
-            elif (type(name) != str) or ((type(name) == str) and name == ""):
+    if args != None:
+        name = args.get("name")
+        age = args.get("age")
+        if (age != None) and (name != None):
+            try:
+                if (type(age) == str) or ((type(age) == int) and age <= 0):
+                    abort(400, message="incorrect artist imput")
+                elif (type(name) != str) or ((type(name) == str) and name == ""):
+                    abort(400, message="incorrect aritst imput")
+            except:
                 abort(400, message="incorrect aritst imput")
-        except:
+        else:
             abort(400, message="incorrect aritst imput")
     else:
         abort(400, message="incorrect aritst imput")
 
 def validate_album_args(args):
-    name = args.get("name")
-    genre = args.get("genre")
-    if (genre != None) and (name != None):
-        try:
-            if (type(name) != str) or (type(genre) != str):
-                abort(400, message="incorrect album imput")
-            elif (type(name) == str) and (type(genre) == str):
-                if (name == "") or (genre == ""):
+    if args !=None:
+        name = args.get("name")
+        genre = args.get("genre")
+        if (genre != None) and (name != None):
+            try:
+                if (type(name) != str) or (type(genre) != str):
                     abort(400, message="incorrect album imput")
-        except:
+                elif (type(name) == str) and (type(genre) == str):
+                    if (name == "") or (genre == ""):
+                        abort(400, message="incorrect album imput")
+            except:
+                abort(400, message="incorrect album imput")
+        else:
             abort(400, message="incorrect album imput")
     else:
         abort(400, message="incorrect album imput")
 
 def validate_track_args(args):
-    name = args.get("name")
-    duration = args.get("duration")
-    if (name != None) and (duration != None):
-        try:
-            if (type(duration) == str) or (duration <= 0):
+    if args != None:
+        name = args.get("name")
+        duration = args.get("duration")
+        if (name != None) and (duration != None):
+            try:
+                if (type(duration) == str) or (duration <= 0):
+                    abort(400, message="incorrect track imput")
+                elif (type(name) != str) or ((type(name) == str) and name == ""):
+                    abort(400, message="incorrect track imput")
+            except:
                 abort(400, message="incorrect track imput")
-            elif (type(name) != str) or ((type(name) == str) and name == ""):
-                abort(400, message="incorrect track imput")
-        except:
+        else:
             abort(400, message="incorrect track imput")
     else:
         abort(400, message="incorrect track imput")
