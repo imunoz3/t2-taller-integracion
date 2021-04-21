@@ -119,7 +119,7 @@ class Artist(Resource):
         abort_if_artist_doesnt_exist(artist_id, 'delete')
         ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
         db.session.commit()
-        return 'artist deleted', 204
+        return '', 204
 
 class ArtistList(Resource):
     def get(self):
