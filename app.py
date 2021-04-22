@@ -12,7 +12,7 @@ class ArtistModel(db.Model):
     ID = db.Column(db.String(80), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     age = db.Column(db.Integer, nullable=False)
-    albums = db.relationship('AlbumModel', passive_deletes=True, backref='artist_model', lazy = 'dynamic')
+    albums = db.relationship('AlbumModel', passive_deletes='all', backref='artist_model', lazy = 'dynamic')
 
     def serialize(self):
         return {
@@ -29,7 +29,7 @@ class AlbumModel(db.Model):
     name = db.Column(db.String(80), nullable=False)
     genre = db.Column(db.String(80), nullable=False)
     artist_id = db.Column(db.String(80), db.ForeignKey('artist_model.ID', ondelete='CASCADE'), nullable=False)
-    tracks = db.relationship('TrackModel', passive_deletes=True, backref='album_model', lazy = 'dynamic')
+    tracks = db.relationship('TrackModel', passive_deletes='all', backref='album_model', lazy = 'dynamic')
 
     def serialize(self):
         return {
