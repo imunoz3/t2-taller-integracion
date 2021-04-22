@@ -12,7 +12,7 @@ class ArtistModel(db.Model):
     ID = db.Column(db.String(80), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     age = db.Column(db.Integer, nullable=False)
-    albums = db.relationship('AlbumModel', passive_deletes='all', backref='artist_model', lazy = 'dynamic')
+    albums = db.relationship('AlbumModel', passive_deletes=True, backref='artist_model', lazy = 'dynamic')
 
     def serialize(self):
         return {
@@ -29,7 +29,7 @@ class AlbumModel(db.Model):
     name = db.Column(db.String(80), nullable=False)
     genre = db.Column(db.String(80), nullable=False)
     artist_id = db.Column(db.String(80), db.ForeignKey('artist_model.ID', ondelete='CASCADE'), nullable=False)
-    tracks = db.relationship('TrackModel', passive_deletes='all', backref='album_model', lazy = 'dynamic')
+    tracks = db.relationship('TrackModel', passive_deletes=True, backref='album_model', lazy = 'dynamic')
 
     def serialize(self):
         return {
@@ -145,7 +145,8 @@ class Artist(Resource):
 
     def delete(self, artist_id):
         abort_if_artist_doesnt_exist(artist_id, 'delete')
-        ArtistModel.query.filter(ArtistModel.ID == artist_id).delete()
+        artist = ArtistModel.query.filter(ArtistModel.ID == artist_id).first()
+        db.session.delete(artist)
         db.session.commit()
         return "artist deleted", 204
 
@@ -232,7 +233,8 @@ class Album(Resource):
 
     def delete(self, album_id):
         abort_if_album_doesnt_exist(album_id, 'delete')
-        AlbumModel.query.filter(AlbumModel.ID == album_id).delete()
+        album = AlbumModel.query.filter(AlbumModel.ID == album_id).first()
+        db.session.delete(album)
         db.session.commit()
         return "album deleted", 204
 
@@ -302,7 +304,8 @@ class Track(Resource):
 
     def delete(self, track_id):
         abort_if_track_doesnt_exist(track_id, 'delete')
-        TrackModel.query.filter(TrackModel.ID == track_id).delete()
+        track = TrackModel.query.filter(TrackModel.ID == track_id).first()
+        db.session.delete(track)
         db.session.commit()
         return "track deleted", 204
 
